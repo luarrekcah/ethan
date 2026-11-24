@@ -40,6 +40,19 @@
   #qr img { width:220px; height:220px; }
   textarea { width:100%; height:90px; font-size:.75rem; border-radius:12px; border:1px solid #cfdbe8; padding:8px; resize:none; }
   footer { text-align:center; padding:30px; font-size:.9rem; }
+  #barra { display:none; }
+  @media (max-width:850px){
+    #barra { position:fixed; left:12px; right:12px; bottom:12px; z-index:10; background:var(--azul-esc); color:#fff;
+      border-radius:20px; padding:10px 12px; align-items:center; gap:10px; box-shadow:0 6px 20px rgba(0,0,0,.25); }
+    #barra.on { display:flex; }
+    #barra .sacola { position:relative; font-size:28px; background:none; border:none; cursor:pointer; }
+    #barra .badge { position:absolute; top:-4px; right:-6px; background:var(--rosa); color:var(--azul-esc); font-size:.75rem;
+      font-weight:700; border-radius:10px; padding:1px 6px; }
+    #barra .info { flex:1; line-height:1.1; font-size:.8rem; }
+    #barra .info b { font-size:1.15rem; }
+    #barra .gp { background:#fff; color:var(--azul-esc); border:none; border-radius:14px; padding:10px 14px; font-weight:700; font-family:inherit; }
+    footer { padding-bottom:100px; }
+  }
 </style>
 </head>
 <body>
@@ -61,7 +74,7 @@
 
 <div class="container">
   <main class="grid" id="grid"></main>
-  <aside>
+  <aside id="resumo">
     <h2>🎁 Seu presente</h2>
     <ul id="lista"><li style="border:none;color:#999">Nenhum item escolhido ainda</li></ul>
     <div class="total">Total: <span id="total">R$ 0,00</span></div>
@@ -74,6 +87,11 @@
       <button class="btn" id="copiar">📋 Copiar código</button>
     </div>
   </aside>
+</div>
+<div id="barra">
+  <button class="sacola" onclick="irResumo()">🛍️<span class="badge" id="bCount">0</span></button>
+  <div class="info" onclick="irResumo()">Sua sacola<br><b id="bTotal">R$ 0,00</b></div>
+  <button class="gp" onclick="document.getElementById('gerar').click()">Gerar Pix 💙</button>
 </div>
 <footer>Os papais <b>Raul e Kessia</b> agradecem de coração por cada presente 💙<br><small>Feito com amor para o Ethan</small></footer>
 
@@ -139,7 +157,11 @@ function atualizar(){
     : '<li style="border:none;color:#999">Nenhum item escolhido ainda</li>';
   document.getElementById("total").textContent = brl(total());
   document.getElementById("gerar").disabled = !itens.length;
+  document.getElementById("barra").classList.toggle("on", itens.length>0);
+  document.getElementById("bCount").textContent = qtd.reduce((a,b)=>a+b,0);
+  document.getElementById("bTotal").textContent = brl(total());
 }
+function irResumo(){ document.getElementById("resumo").scrollIntoView({behavior:"smooth"}); }
 
 // ===== GERAÇÃO DO BR CODE (padrão EMV do Banco Central) =====
 const limpa = (s,max) => s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Za-z0-9 ]/g,"").toUpperCase().slice(0,max);
@@ -181,6 +203,7 @@ document.getElementById("gerar").onclick = () => {
   const qr = qrcode(0,"M"); qr.addData(cod); qr.make();
   document.getElementById("qr").innerHTML = qr.createImgTag(6,8);
   document.getElementById("pix").style.display = "block";
+  irResumo();
 };
 document.getElementById("copiar").onclick = async () => {
   await navigator.clipboard.writeText(document.getElementById("codigo").value);
