@@ -17,14 +17,17 @@
   header p { font-size:1.1rem; max-width:560px; margin:10px auto; }
   .container { max-width:1100px; margin:auto; padding:20px; display:grid; grid-template-columns:1fr 340px; gap:24px; }
   @media (max-width:850px){ .container{ grid-template-columns:1fr; } }
-  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; }
-  .card { background:#fff; border-radius:20px; padding:18px; box-shadow:0 4px 14px rgba(61,111,158,.1);
-    display:flex; flex-direction:column; justify-content:space-between; transition:.2s; border:2px solid transparent; }
-  .card:hover { transform:translateY(-3px); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:18px; }
+  .card { background:#fff; border-radius:20px; padding:16px; box-shadow:0 4px 14px rgba(61,111,158,.1);
+    display:flex; flex-direction:column; justify-content:space-between; transition:.2s; border:2px solid transparent; overflow:hidden; }
+  .card:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(61,111,158,.16); }
   .card.sel { border-color:var(--azul); background:#f3f8fd; }
-  .card .ic { font-size:34px; }
-  .card h3 { font-size:1rem; margin:8px 0; }
-  .card .preco { font-weight:700; color:var(--azul-esc); font-size:1.2rem; }
+  .card .img-box { width:100%; height:180px; border-radius:14px; overflow:hidden; background:#f4f7fa; display:flex; align-items:center; justify-content:center; margin-bottom:12px; position:relative; }
+  .card .img-box img { width:100%; height:100%; object-fit:cover; transition:.3s; }
+  .card:hover .img-box img { transform:scale(1.04); }
+  .card .ic { font-size:42px; }
+  .card h3 { font-size:.95rem; margin:6px 0 8px; line-height:1.3; font-weight:700; color:#2c3e50; }
+  .card .preco { font-weight:700; color:var(--azul-esc); font-size:1.25rem; }
   .qtd { display:flex; align-items:center; gap:10px; margin-top:12px; }
   .qtd button { width:34px; height:34px; border-radius:50%; border:none; background:var(--azul); color:#fff; font-size:1.2rem; cursor:pointer; }
   .qtd span { min-width:20px; text-align:center; font-weight:700; }
@@ -104,39 +107,46 @@ const PIX = {
 };
 
 const presentes = [
-  ["👕","Kit 10 Body Bebê Manga Longa",79.99],
-  ["👖","Kit 5 Mijão Bebê",41.00],
-  ["🧸","Kit 10 Peças 5 Body Longo + 5 Calça Mijão Bebê",148.00],
-  ["❄️","Kit 5 Macacão Estampado Zíper Bebê Inverno",75.00],
-  ["🧦","Kit 12 Pares Meias Bebê",29.00],
-  ["🧢","Kit Maternidade 3 Cores Touca + Luva + Meia",45.90],
-  ["⭐","Mantinha para Bebê Buba Estrelinhas",35.87],
-  ["🛁","Kit 2 Toalhas de Banho Bebê Soft Fralda Capuz",72.58],
-  ["🌙","Kit 3 Peças Cueiro de Bebê",60.00],
-  ["☁️","3 Cueiros Manta Flanelado Minasrey",65.45],
-  ["🍼","Kit 6 Fraldinhas de Boca Bebê",43.12],
-  ["🎀","Saída Maternidade",232.58],
-  ["🏷️","5 Saquinhos Organizadores com Tags + 2 Porta Fralda/Remédio",34.50],
-  ["💉","Caderneta de Vacinação",46.00],
-  ["✂️","Kit Completo de Higiene Bebê 13",33.99],
-  ["👃","Aspirador Nasal Elétrico",36.05],
-  ["💅","Lixa de unha Shell elétrica infantil 7 em 1",23.69],
-  ["🧴","Kit Shampoo + Condicionador + Sabonete Líquido + Colônia + Hidratante + Óleo Infantil",64.90],
-  ["🛏️","Ninho Redutor de Berço com Travesseiro",78.39],
-  ["🧻","Lenços Umedecidos Huggies Recém-nascido Sem Fragrância",45.37],
-  ["🩹","Creme para Assaduras Bepantol Baby 30g",26.91],
-  ["🛡️","Creme para Prevenção de Assaduras Cetrilan 40g",42.66],
-  ["🌿","Creme Assaduras Weleda Babycreme",32.57],
-  ["🌯","Cueiro Charutinho Saco de Dormir",22.44]
+  ["👕","Kit 10 Body Bebê Manga Longa",79.99,"assets/img/body_10_longo.jpg"],
+  ["👖","Kit 5 Mijão Bebê",41.00,"assets/img/mijao_5.jpg"],
+  ["🧸","Kit 10 Peças 5 Body Longo + 5 Calça Mijão Bebê",148.00,"assets/img/kit_10_body_mijao.webp"],
+  ["❄️","Kit 5 Macacão Estampado Zíper Bebê Inverno",75.00,"assets/img/macacao_5_ziper.jpg"],
+  ["🧦","Kit 12 Pares Meias Bebê",29.00,"assets/img/meias_12_pares.webp"],
+  ["🧢","Kit Maternidade 3 Cores Touca + Luva + Meia",45.90,"assets/img/kit_maternidade_touca.jpg"],
+  ["⭐","Mantinha para Bebê Buba Estrelinhas",35.87,"assets/img/mantinha_buba.png"],
+  ["🛁","Kit 2 Toalhas de Banho Bebê Soft Fralda Capuz",72.58,"assets/img/toalhas_2_soft.jpg"],
+  ["🌙","Kit 3 Peças Cueiro de Bebê",60.00,"assets/img/cueiro_3_pecas.jpg"],
+  ["☁️","3 Cueiros Manta Flanelado Minasrey",65.45,"assets/img/cueiro_3_minasrey.webp"],
+  ["🍼","Kit 6 Fraldinhas de Boca Bebê",43.12,"assets/img/fraldinhas_6_boca.jpg"],
+  ["🎀","Saída Maternidade",232.58,"assets/img/saida_maternidade.jpg"],
+  ["🏷️","5 Saquinhos Organizadores com Tags + 2 Porta Fralda/Remédio",34.50,"assets/img/saquinhos_organizadores.jpg"],
+  ["👜","Kit Bolsa Maternidade",464.60,"assets/img/kit_bolsa_maternidade.jpg"],
+  ["💉","Caderneta de Vacinação",46.00,"assets/img/caderneta_vacinacao.webp"],
+  ["✂️","Kit Completo de Higiene Bebê 13",33.99,"assets/img/higiene_13_pecas.jpg"],
+  ["👃","Aspirador Nasal Elétrico",36.05,"assets/img/aspirador_nasal.jpg"],
+  ["💅","Lixa de unha Shell elétrica infantil 7 em 1",23.69,"assets/img/lixa_unha_eletrica.jpg"],
+  ["🧴","Kit Shampoo + Condicionador + Sabonete Líquido + Colônia + Hidratante + Óleo Infantil",64.90,"assets/img/kit_banho_higiene.jpg"],
+  ["🛏️","Ninho Redutor de Berço com Travesseiro",78.39,"assets/img/ninho_redutor.jpg"],
+  ["🧻","Lenços Umedecidos Huggies Recém-nascido Sem Fragrância",45.37,"assets/img/lencos_huggies.jpg"],
+  ["🩹","Creme para Assaduras Bepantol Baby 30g",26.91,"assets/img/creme_bepantol.jpg"],
+  ["🛡️","Creme para Prevenção de Assaduras Cetrilan 40g",42.66,"assets/img/creme_cetrilan.png"],
+  ["🌿","Creme Assaduras Weleda Babycreme",32.57,"assets/img/creme_weleda.jpg"],
+  ["🌯","Cueiro Charutinho Saco de Dormir",22.44,"assets/img/cueiro_charutinho.jpg"]
 ];
 const qtd = presentes.map(() => 0);
 const brl = v => v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 
 const grid = document.getElementById("grid");
-presentes.forEach(([ic,nome,preco],i) => {
+presentes.forEach(([ic,nome,preco,img],i) => {
   grid.insertAdjacentHTML("beforeend", `
     <div class="card" id="c${i}">
-      <div><div class="ic">${ic}</div><h3>${nome}</h3><div class="preco">${brl(preco)}</div></div>
+      <div>
+        <div class="img-box">
+          <img src="${img}" alt="${nome}" loading="lazy" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'ic\\'>${ic}</div>';">
+        </div>
+        <h3>${nome}</h3>
+        <div class="preco">${brl(preco)}</div>
+      </div>
       <div class="qtd"><button onclick="mudar(${i},-1)">−</button><span id="q${i}">0</span><button onclick="mudar(${i},1)">+</button></div>
     </div>`);
 });
